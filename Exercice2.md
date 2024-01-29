@@ -295,4 +295,4 @@ db.salles.findOneAndUpdate({ "adresse.ville": "Nîmes" }, { $inc: { capacite: -1
 ```
 
 
-# GG WP
+# GG WP !
