@@ -187,6 +187,28 @@ db.collection.insertMany([
 
 
 
+## Utilisation de pipeline 
+
+On peut utiliser la commande `db.collection.aggregate()` pour utiliser un pipeline. Par exemple ici on utilise un pipeline. 
+
+### Pipeline
+
+Un pipeline est une suite d'opérations qui sont appliquées à un ensemble de documents. Les opérations sont appliquées dans l'ordre dans lequel elles apparaissent dans le pipeline.
+
+```js
+var pipeline = [
+    {$match: {nom: "Dupont"}},
+    {$group: {_id: "$nom", total: {$sum: "$age"}}}
+    {$project: {_id: 0, nom: "$_id", total: 1}}
+]
+```
+
+```bash
+db.collection.aggregate(pipeline)
+```
+
+
+
 
 
   

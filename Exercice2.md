@@ -184,7 +184,12 @@ db.salles.find({
 
 Affichez le nom des salles de type SMAC programmant plus de deux styles de musiques différents en utilisant l’opérateur $where qui permet de faire usage de JavaScript:
 ``` bash
+db.salles.find({
+  smac: true,
+  $where: "this.styles.length > 2"
+}, { nom: true })
 
+??? ça marche pas
 ```
 
 **Question 13**
@@ -233,30 +238,61 @@ Pour les salles dont le nom commence par la lettre P (majuscule ou minuscule), a
 db.salles.updateMany({ nom: { $regex: /^p/i } }, { $inc: { capacite: 150 }, $push: { contact: { telephone: "04 11 94 00 10" } } })
 ```
 
-Question 19
+**Question 19**
 
-Pour les salles dont le nom commence par une voyelle (peu importe la casse, là aussi), rajoutez dans le tableau avis un document composé du champ date valant la date courante et du champ note valant 10 (double ou entier). L’expression régulière pour chercher une chaîne de caractères débutant par une voyelle suivie de n’importe quoi d’autre est [^aeiou]+$.
+Pour les salles dont le nom commence par une voyelle (peu importe la casse, là aussi), rajoutez dans le tableau avis un document composé du champ date valant la date courante et du champ note valant 10 (double ou entier). L’expression régulière pour chercher une chaîne de caractères débutant par une voyelle suivie de n’importe quoi d’autre est [^aeiou]+$: 
+``` bash
+db.salles.updateMany({ nom: { $regex: /^[aeiou]/i } }, { $push: { avis: { date: new Date(), note: 10 } } })
+```
 
-Question 20
 
-En mode upsert, vous mettrez à jour tous les documents dont le nom commence par un z ou un Z en leur affectant comme nom « Pub Z », comme valeur du champ capacite 50 personnes (type entier et non décimal) et en positionnant le champ booléen smac à la valeur « false ».
+**Question 20**
 
-Question 21
+En mode upsert, vous mettrez à jour tous les documents dont le nom commence par un z ou un Z en leur affectant comme nom « Pub Z », comme valeur du champ capacite 50 personnes (type entier et non décimal) et en positionnant le champ booléen smac à la valeur « false »:
+``` bash
+db.salles.updateMany({ nom: { $regex: /^z/i } }, { $set: { nom: "Pub Z", capacite: 50, smac: false } }, {upsert: true})
+```
+ 
 
-Affichez le décompte des documents pour lesquels le champ _id est de type « objectId ».
+**Question 21**
 
-Question 22
+Affichez le décompte des documents pour lesquels le champ _id est de type « objectId »:
+``` bash
+db.salles.count({ _id: { $type: "objectId" } })
+```
 
-Pour les documents dont le champ _id n’est pas de type « objectId », affichez le nom de la salle ayant la plus grande capacité. Pour y parvenir, vous effectuerez un tri dans l’ordre qui convient tout en limitant le nombre de documents affichés pour ne retourner que celui qui comporte la capacité maximale.
 
-Question 23
+**Question 22**
 
-Remplacez, sur la base de la valeur de son champ _id, le document créé à l’Question 20 par un document contenant seulement le nom préexistant et la capacité, que vous monterez à 60 personnes.
+Pour les documents dont le champ _id n’est pas de type « objectId », affichez le nom de la salle ayant la plus grande capacité. Pour y parvenir, vous effectuerez un tri dans l’ordre qui convient tout en limitant le nombre de documents affichés pour ne retourner que celui qui comporte la capacité maximale:
+``` bash
+db.salles.find({ _id: { $not: { $type: "objectId" } } }, { nom: true, capacite: true }).sort({ capacite: -1 }).limit(1)
+```
 
-Question 24
 
-Effectuez la suppression d’un seul document avec les critères suivants : le champ _id est de type « objectId » et la capacité de la salle est inférieure ou égale à 60 personnes.
 
-Question 25
+**Question 23**
 
-À l’aide de la méthode permettant de trouver un seul document et de le mettre à jour en même temps, réduisez de 15 personnes la capacité de la salle située à Nîmes.
+Remplacez, sur la base de la valeur de son champ _id, le document créé à l’question 20 par un document contenant seulement le nom préexistant et la capacité, que vous monterez à 60 personnes:
+``` bash
+db.salles.replaceOne({ _id: {$type: "objectId"} }, { nom: "Pub Z", capacite: 60 })
+```
+
+
+**Question 24**
+
+Effectuez la suppression d’un seul document avec les critères suivants : le champ _id est de type « objectId » et la capacité de la salle est inférieure ou égale à 60 personnes:
+``` bash
+db.salles.deleteOne({ _id: { $type: "objectId" }, capacite: { $lte: 60 } })
+```
+
+
+**Question 25**
+
+À l’aide de la méthode permettant de trouver un seul document et de le mettre à jour en même temps, réduisez de 15 personnes la capacité de la salle située à Nîmes:
+``` bash
+db.salles.findOneAndUpdate({ "adresse.ville": "Nîmes" }, { $inc: { capacite: -15 } })
+```
+
+
+# GG WP
