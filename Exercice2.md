@@ -1,5 +1,5 @@
 Voici la base de donnees qui permet d'effectuer la serie de question :
-
+```json
 db.salles.insertMany([ 
    { 
        "_id": 1, 
@@ -62,92 +62,176 @@ db.salles.insertMany([
        "capacite": NumberInt(200), 
        "styles": ["blues", "rock"] 
    } 
-]) 
-Question 1
+])
+```
+
+
+**Question 1**
+
 Affichez l’identifiant et le nom des salles qui sont des SMAC :
 ``` bash
 db.salles.find({smac: true}, {_id: true, nom: true})
 ```
 
-Question 2
+**Question 2**
+
 Affichez le nom des salles qui possèdent une capacité d’accueil strictement supérieure à 1000 places :
 ``` bash
 db.salles.find({capacite: {$gt: 1000}}, {nom: true})
 ```
 
 
-Question 3
+**Question 3**
+
 Affichez l’identifiant des salles pour lesquelles le champ adresse ne comporte pas de numéro.
 ``` bash
 db.salles.find({"adresse.numero": {$exists: false}}, {_id: true})
 ```
 
 
-Question 4
+**Question 4**
+
 Affichez l’identifiant puis le nom des salles qui ont exactement un avis.
 ``` bash
 db.salles.find({avis: {$size: 1}}, {_id: true, nom: true})
 ```
 
-Question 5
+**Question 5**
+
 Affichez tous les styles musicaux des salles qui programment notamment du blues:
 ``` bash
 db.salles.find({styles: "blues"}, {styles: true})
 ```
 
 
-Question 6
+**Question 6**
+
 Pour les salles ayant le style "blues" en premier élément dans leur tableau de styles, affichez les styles musicaux :
 ``` bash
 db.salles.find({ $expr: { $eq: [ { $arrayElemAt: [ "$styles", 0 ] }, "blues" ] } }, { styles: true })
 ```
 
-Question 7
-Affichez la ville des salles dont le code postal commence par 84 et qui ont une capacité strictement inférieure à 500 places (pensez à utiliser une expression régulière).
+**Question 7**
 
-Question 8
+Affichez la ville des salles dont le code postal commence par 84 et qui ont une capacité strictement inférieure à 500 places en utilisant une expression régulière.
+``` bash
+db.salles.find({
+  "adresse.codePostal": { $regex: /^84/ },
+  capacite: { $lt: 500 }
+}, { "adresse.ville": true })
+```
 
-Affichez l’identifiant pour les salles dont l’identifiant est pair ou le champ avis est absent.
 
-Question 9
 
-Affichez le nom des salles dont au moins un des avis comporte une note comprise entre 8 et 10 (tous deux inclus).
+**Question 8**
 
-Question 10
+Affichez l’identifiant pour les salles dont l’identifiant est pair ou le champ avis est absent:
+``` bash
+db.salles.find({
+  $or: [
+    { _id: { $mod: [ 2, 0 ] } },
+    { avis: { $exists: false } }
+  ]
+}, { _id: true })
+```
 
-Affichez le nom des salles dont au moins un des avis comporte une date postérieure au 15/11/2019 (pensez à utiliser le type JavaScript Date).
 
-Question 11
+**Question 9**
 
-Affichez le nom ainsi que la capacité des salles dont le produit de la valeur de l’identifiant par 100 est strictement supérieur à la capacité.
+Affichez le nom des salles dont au moins un des avis comporte une note comprise entre 8 et 10 (tous deux inclus):
+``` bash
+db.salles.find({
+  avis: {
+    $elemMatch: {
+      note: { $gte: 8, $lte: 10 }
+    }
+  }
+}, { nom: true })
+```
 
-Question 12
 
-Affichez le nom des salles de type SMAC programmant plus de deux styles de musiques différents en utilisant l’opérateur $where qui permet de faire usage de JavaScript.
+**Question 10**
 
-Question 13
+Affichez le nom des salles dont au moins un des avis comporte une date postérieure au 15/11/2019 (pensez à utiliser le type JavaScript Date):
+``` bash
+db.salles.find({
+  avis: {
+    $elemMatch: {
+      date: { $gt: new Date('2019-11-15') }
+    }
+  }
+}, { nom: true })
+```
 
-Affichez les différents codes postaux présents dans les documents de la collection salles.
 
-Question 14
+**Question 11**
 
-Mettez à jour tous les documents de la collection salles en rajoutant 100 personnes à leur capacité actuelle.
+Affichez le nom ainsi que la capacité des salles dont le produit de la valeur de l’identifiant par 100 est strictement supérieur à la capacité:
+``` bash
+db.salles.find({
+  $expr: {
+    $gt: [
+      { $multiply: [ "$_id", 100 ] },
+      "$capacite"
+    ]
+  }
+}, { nom: true, capacite: true })
+```
 
-Question 15
 
-Ajoutez le style « jazz » à toutes les salles qui n’en programment pas.
 
-Question 16
+**Question 12**
 
-Retirez le style «funk» à toutes les salles dont l’identifiant n’est égal ni à 2, ni à 3.
+Affichez le nom des salles de type SMAC programmant plus de deux styles de musiques différents en utilisant l’opérateur $where qui permet de faire usage de JavaScript:
+``` bash
 
-Question 17
+```
 
-Ajoutez un tableau composé des styles «techno» et « reggae » à la salle dont l’identifiant est 3.
+**Question 13**
 
-Question 18
+Affichez les différents codes postaux présents dans les documents de la collection salles:
+``` bash
+db.salles.distinct("adresse.codePostal")
+```
 
-Pour les salles dont le nom commence par la lettre P (majuscule ou minuscule), augmentez la capacité de 150 places et rajoutez un champ de type tableau nommé contact dans lequel se trouvera un document comportant un champ nommé telephone dont la valeur sera « 04 11 94 00 10 ».
+
+**Question 14**
+
+Mettez à jour tous les documents de la collection salles en rajoutant 100 personnes à leur capacité actuelle:
+``` bash
+db.salles.updateMany({}, { $inc: { capacite: 100 } })
+```
+
+**Question 15**
+
+Ajoutez le style « jazz » à toutes les salles qui n'ont pas de jazz:
+``` bash
+db.salles.updateMany({ styles: { $ne: "jazz" } }, { $push: { styles: "jazz" } })
+```
+
+
+**Question 16**
+
+Retirez le style «funk» à toutes les salles dont l’identifiant n’est égal ni à 2, ni à 3:
+``` bash
+db.salles.updateMany({ _id: { $nin: [ 2, 3 ] } }, { $pull: { styles: "funk" } })
+```
+
+
+**Question 17**
+
+Ajoutez un tableau composé des styles «techno» et « reggae » à la salle dont l’identifiant est 3:
+``` bash
+db.salles.updateOne({ _id: 3 }, { $push: { styles: { $each: [ "techno", "reggae" ] } } })
+```
+
+
+**Question 18**
+
+Pour les salles dont le nom commence par la lettre P (majuscule ou minuscule), augmentez la capacité de 150 places et rajoutez un champ de type tableau nommé contact dans lequel se trouvera un document comportant un champ nommé telephone dont la valeur sera « 04 11 94 00 10 »:
+``` bash
+db.salles.updateMany({ nom: { $regex: /^p/i } }, { $inc: { capacite: 150 }, $push: { contact: { telephone: "04 11 94 00 10" } } })
+```
 
 Question 19
 
