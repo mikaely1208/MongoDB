@@ -70,7 +70,7 @@ db.salles.insertMany([
 
 Affichez l’identifiant et le nom des salles qui sont des SMAC :
 ``` bash
-db.salles.find({smac: true}, {_id: true, nom: true})
+db.salles.find({smac: true}, {nom: true})
 ```
 
 **Question 2**

@@ -209,6 +209,76 @@ db.collection.aggregate(pipeline)
 
 
 
+## GéoJSON
+
+### Intégrez des données géographiques
+
+On peut utiliser la commande `db.collection.insert()` pour insérer des données dans une collection. Par exemple ici on insère des données géographiques.
+
+```bash
+db.collection.insert({
+    type: "Feature",
+    properties: {
+        name: "Paris",
+        population: 2200000
+    },
+    geometry: {
+        type: "Point",
+        coordinates: [2.3522, 48.8566]
+    }
+})
+```
+
+On peut aussi intégrer des types différents de données géographiques tel que :
+
+- Point
+- MultiPoint
+- LineString
+- MultiLineString
+- Polygon
+- MultiPolygon
+- GeometryCollection
+- Feature
+- FeatureCollection
+
+
+### Recherchez des données géographiques
+
+On peut utiliser la commande `db.collection.find()` pour rechercher des données dans une collection. Par exemple ici on recherche des données géographiques.
+
+```bash
+db.collection.find({
+    geometry: {
+        $geoIntersects: {
+            $geometry: {
+                type: "Point",
+                coordinates: [2.3522, 48.8566]
+            }
+        }
+    }
+})
+```
+
+On peut utiliser des opération géographiques tel que :
+
+- $geoIntersects : Retourne les documents dont la géométrie intersecte la géométrie spécifiée
+exemple : `db.collection.find({geometry: {$geoIntersects: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+
+- $geoWithin : Retourne les documents dont la géométrie est entièrement contenue dans la géométrie spécifiée
+exemple : `db.collection.find({geometry: {$geoWithin: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+
+- $near : Retourne les documents géographiquement proches d'un point
+exemple : `db.collection.find({geometry: {$near: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+
+- $nearSphere : Retourne les documents géographiquement proches d'un point en utilisant la distance sphérique
+exemple : `db.collection.find({geometry: {$nearSphere: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+
+
+
+
+
+
+
 
 
   
