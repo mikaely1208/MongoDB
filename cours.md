@@ -202,14 +202,73 @@ db.collection.aggregate([
 ```
 ### Les différents opérateurs d'aggregation sont :
 
-- $match : Filtre les documents 
-- $group : Regroupe les documents
-- $project : Modifie la structure des documents
-- $sort : Trie les documents
-- $limit : Limite le nombre de documents
-- $skip : Ignore les documents
-- $unwind : Décompose les tableaux
-- $lookup : Effectue une jointure
+- **$match** : Filtre les documents 
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$match: {nom: "Dupont"}})
+# Filtre les documents dont le nom est "Dupont"
+```
+- **$group** : Regroupe les documents
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$group: {_id: "$nom", total: {$sum: "$age"}}})
+# Regroupe les documents par nom et calcule la somme des âges
+```
+
+- **$project** : Modifie la structure des documents
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$project: {_id: 0, nom: "$_id", total: 1}})
+# Supprime le champ "_id" et renomme le champ "_id" en "nom"
+```
+
+- **$sort** : Trie les documents
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$sort: {nom: 1}})
+# Trie par ordre alphabétique croissant
+
+db.collection.aggregate({$sort: {nom: -1}})
+# Trie par ordre alphabétique décroissant
+```
+
+
+- **$limit** : Limite le nombre de documents
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$limit: 5})
+# Limite à 5 documents
+```
+
+- **$skip** : Ignore les documents
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$skip: 5})
+# Ignore les 5 premiers documents
+```
+
+- **$unwind** : Décompose les tableaux
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$unwind: "$parents"})
+# Décompose le tableau "parents"
+```
+
+- **$lookup** : Effectue une jointure
+
+_Exemple_ : 
+```bash
+db.collection.aggregate({$lookup: {from: "collection", localField: "nom", foreignField: "nom", as: "resultat"}})
+# Effectue une jointure entre la collection courante et la collection "collection" sur le champ "nom" et retourne le résultat dans le champ "resultat"
+```
+
 
 
 
