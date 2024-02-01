@@ -185,6 +185,32 @@ db.collection.insertMany([
 ])
 ```
 
+## Aggregation
+
+Les requetes d'aggregation permettent de traiter les données et de retourner un résultat. Concrètement, elles permettent de faire des jointures, des regroupements, des tris, des calculs, etc.
+
+### Utilisation de l'aggregation
+
+On peut utiliser la commande `db.collection.aggregate()` pour utiliser une aggregation. Par exemple ici on utilise une aggregation.
+
+```bash
+db.collection.aggregate([
+    {$match: {nom: "Dupont"}},
+    {$group: {_id: "$nom", total: {$sum: "$age"}}}
+    {$project: {_id: 0, nom: "$_id", total: 1}}
+])
+```
+### Les différents opérateurs d'aggregation sont :
+
+- $match : Filtre les documents 
+- $group : Regroupe les documents
+- $project : Modifie la structure des documents
+- $sort : Trie les documents
+- $limit : Limite le nombre de documents
+- $skip : Ignore les documents
+- $unwind : Décompose les tableaux
+- $lookup : Effectue une jointure
+
 
 
 ## Utilisation de pipeline 
