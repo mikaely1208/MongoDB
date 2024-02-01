@@ -25,7 +25,8 @@ Les propriétés d'un objet JSON sont représentées par des paires clé/valeur.
 ```json
 {"clé": "valeur"; "autreclé": "autrevaleur"}
 ```
-```
+
+```json
 {
     "nom": "Dupont",
     "prenom": "Jean",
@@ -107,7 +108,7 @@ Malgré cela, tous les documents d'une même collection sont généralement simi
 
 On peut utilser la commande `use` pour créer une base de données.
 
-```bash
+```js
 use <nom de la base de données>
 ```
 
@@ -115,7 +116,7 @@ use <nom de la base de données>
 
 On peut utiliser la commande `db.createCollection()` pour créer une collection.
 
-```bash
+```js
 db.createCollection("nom de la collection")
 ```
 
@@ -123,7 +124,7 @@ db.createCollection("nom de la collection")
 
 On peut utiliser la commande `db.collection.insert()` pour insérer des données dans une collection.
 
-```bash
+```js
 db.collection.insert({nom: "Dupont", prenom: "Jean", age: 25})
 ```
 
@@ -131,7 +132,7 @@ db.collection.insert({nom: "Dupont", prenom: "Jean", age: 25})
 
 On peut utiliser la commande `db.collection.findOne()` pour rechercher des données dans une collection.
 
-```bash
+```js
 db.collection.findOne(<filtre>, {<projection>})
 ```
 
@@ -139,7 +140,7 @@ db.collection.findOne(<filtre>, {<projection>})
 
 On peut utiliser la commande `db.collection.update()` pour mettre à jour des données dans une collection.
 
-```bash
+```js
 db.collection.update({nom: "Dupont"}, {$set: {age: 26}})
 ```
 
@@ -147,7 +148,7 @@ db.collection.update({nom: "Dupont"}, {$set: {age: 26}})
 
 On peut utiliser la commande `db.collection.remove()` pour supprimer des données dans une collection.
 
-```bash
+```js
 db.collection.remove({nom: "Dupont"})
 ```
 
@@ -155,7 +156,7 @@ db.collection.remove({nom: "Dupont"})
 
 On peut utiliser la commande `db.collection.drop()` pour supprimer une collection.
 
-```bash
+```js
 db.collection.drop()
 ```
 
@@ -163,7 +164,7 @@ db.collection.drop()
 
 On peut utiliser la commande `db.dropDatabase()` pour supprimer une base de données.
 
-```bash
+```js
 db.dropDatabase()
 ```
 
@@ -171,7 +172,7 @@ db.dropDatabase()
 
 On peut utiliser la commande `db.collection.insertMany()` pour insérer plusieurs documents dans une collection. Par exemple ici on en rentre 20 différentes.
     
-```bash
+```js
 db.collection.insertMany([
     {nom: "Dupont", prenom: "Dean", age: 21},
     {nom: "Dupont", prenom: "Jean", age: 22},
@@ -193,7 +194,7 @@ Les requetes d'aggregation permettent de traiter les données et de retourner un
 
 On peut utiliser la commande `db.collection.aggregate()` pour utiliser une aggregation. Par exemple ici on utilise une aggregation.
 
-```bash
+```js
 db.collection.aggregate([
     {$match: {nom: "Dupont"}},
     {$group: {_id: "$nom", total: {$sum: "$age"}}}
@@ -205,14 +206,14 @@ db.collection.aggregate([
 - **$match** : Filtre les documents 
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$match: {nom: "Dupont"}})
 # Filtre les documents dont le nom est "Dupont"
 ```
 - **$group** : Regroupe les documents
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$group: {_id: "$nom", total: {$sum: "$age"}}})
 # Regroupe les documents par nom et calcule la somme des âges
 ```
@@ -220,7 +221,7 @@ db.collection.aggregate({$group: {_id: "$nom", total: {$sum: "$age"}}})
 - **$project** : Modifie la structure des documents
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$project: {_id: 0, nom: "$_id", total: 1}})
 # Supprime le champ "_id" et renomme le champ "_id" en "nom"
 ```
@@ -228,7 +229,7 @@ db.collection.aggregate({$project: {_id: 0, nom: "$_id", total: 1}})
 - **$sort** : Trie les documents
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$sort: {nom: 1}})
 # Trie par ordre alphabétique croissant
 
@@ -240,7 +241,7 @@ db.collection.aggregate({$sort: {nom: -1}})
 - **$limit** : Limite le nombre de documents
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$limit: 5})
 # Limite à 5 documents
 ```
@@ -248,7 +249,7 @@ db.collection.aggregate({$limit: 5})
 - **$skip** : Ignore les documents
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$skip: 5})
 # Ignore les 5 premiers documents
 ```
@@ -256,7 +257,7 @@ db.collection.aggregate({$skip: 5})
 - **$unwind** : Décompose les tableaux
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$unwind: "$parents"})
 # Décompose le tableau "parents"
 ```
@@ -264,7 +265,7 @@ db.collection.aggregate({$unwind: "$parents"})
 - **$lookup** : Effectue une jointure
 
 _Exemple_ : 
-```bash
+```js
 db.collection.aggregate({$lookup: {from: "collection", localField: "nom", foreignField: "nom", as: "resultat"}})
 # Effectue une jointure entre la collection courante et la collection "collection" sur le champ "nom" et retourne le résultat dans le champ "resultat"
 ```
@@ -288,7 +289,7 @@ var pipeline = [
 ]
 ```
 
-```bash
+```js
 db.collection.aggregate(pipeline)
 ```
 
@@ -300,7 +301,7 @@ db.collection.aggregate(pipeline)
 
 On peut utiliser la commande `db.collection.insert()` pour insérer des données dans une collection. Par exemple ici on insère des données géographiques.
 
-```bash
+```js
 db.collection.insert({
     type: "Feature",
     properties: {
@@ -331,7 +332,7 @@ On peut aussi intégrer des types différents de données géographiques tel que
 
 On peut utiliser la commande `db.collection.find()` pour rechercher des données dans une collection. Par exemple ici on recherche des données géographiques.
 
-```bash
+```js
 db.collection.find({
     geometry: {
         $geoIntersects: {
@@ -346,17 +347,52 @@ db.collection.find({
 
 On peut utiliser des opération géographiques tel que :
 
-- $geoIntersects : Retourne les documents dont la géométrie intersecte la géométrie spécifiée
-exemple : `db.collection.find({geometry: {$geoIntersects: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+- **$geoIntersects** : Retourne les documents dont la géométrie intersecte la géométrie spécifiée
 
-- $geoWithin : Retourne les documents dont la géométrie est entièrement contenue dans la géométrie spécifiée
-exemple : `db.collection.find({geometry: {$geoWithin: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+_Exemple_ : 
+```js
+db.collection.find(
+    {geometry: 
+    {$geoIntersects: 
+    {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}
+    }}})
+```
 
-- $near : Retourne les documents géographiquement proches d'un point
-exemple : `db.collection.find({geometry: {$near: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
 
-- $nearSphere : Retourne les documents géographiquement proches d'un point en utilisant la distance sphérique
-exemple : `db.collection.find({geometry: {$nearSphere: {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}}}})`
+- **$geoWithin** : Retourne les documents dont la géométrie est entièrement contenue dans la géométrie spécifiée
+
+_Exemple_ : 
+```js
+db.collection.find(
+    {geometry: 
+    {$geoWithin: 
+    {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}
+    }}})
+```
+
+
+
+- **$near** : Retourne les documents géographiquement proches d'un point
+
+_Exemple_ : 
+```js
+db.collection.find(
+    {geometry: 
+    {$near: 
+    {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}
+    }}})
+```
+
+- **$nearSphere** : Retourne les documents géographiquement proches d'un point en utilisant la distance sphérique
+
+_Exemple_ : 
+```js
+db.collection.find(
+    {geometry: 
+    {$nearSphere: 
+    {$geometry: {type: "Point", coordinates: [2.3522, 48.8566]}
+    }}})
+```
 
 
 
